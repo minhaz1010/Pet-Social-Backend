@@ -1,8 +1,8 @@
 import { Schema } from "mongoose";
 
-export type TRole = "user" | "admin";
+export type TRole = "USER" | "ADMIN";
 
-export type TMemberShip = "regular" | "premium";
+export type TMemberShip = "REGULAR" | "PREMIUM";
 
 export interface IUser {
   userId: string;
