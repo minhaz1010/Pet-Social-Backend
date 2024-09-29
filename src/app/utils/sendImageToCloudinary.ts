@@ -1,7 +1,7 @@
-import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
-import fs from 'fs';
-import multer from 'multer';
-import config from '../config';
+import { UploadApiResponse, v2 as cloudinary } from "cloudinary";
+import fs from "fs";
+import multer from "multer";
+import config from "../config";
 
 cloudinary.config({
   cloud_name: config.CLOUDINARY_CLOUD_NAME,
@@ -27,7 +27,7 @@ export const sendImageToCloudinary = (
           if (err) {
             console.log(err);
           } else {
-            console.log('File is deleted.');
+            console.log("File is deleted.");
           }
         });
       },
@@ -37,11 +37,11 @@ export const sendImageToCloudinary = (
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, process.cwd() + '/uploads/');
+    cb(null, process.cwd() + "/uploads/");
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldname + '-' + uniqueSuffix);
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, file.fieldname + "-" + uniqueSuffix);
   },
 });
 
