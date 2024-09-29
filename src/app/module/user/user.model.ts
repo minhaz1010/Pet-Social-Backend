@@ -5,11 +5,11 @@ const userSchema = new Schema<IUser>({
   userId: {
     type: String,
     required: true,
-    unique:true
+    unique: true,
   },
   userName: {
     type: String,
-    unique:true,
+    unique: true,
     required: true,
   },
   fullName: {
@@ -19,7 +19,7 @@ const userSchema = new Schema<IUser>({
   email: {
     type: String,
     required: true,
-    unique:true
+    unique: true,
   },
   imageURL: {
     type: String,
@@ -44,12 +44,12 @@ const userSchema = new Schema<IUser>({
   ],
   membership: {
     type: String,
-    enum:["REGULAR","PREMIUM"],
+    enum: ["REGULAR", "PREMIUM"],
     default: "REGULAR",
   },
   role: {
     type: String,
-    enum:["USER","ADMIN"],
+    enum: ["USER", "ADMIN"],
     default: "USER",
   },
 });
