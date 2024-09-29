@@ -1,5 +1,4 @@
-
- import httpStatus from "http-status";
+import httpStatus from "http-status";
 import {
   JsonWebTokenError,
   NotBeforeError,

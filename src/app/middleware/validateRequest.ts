@@ -1,4 +1,3 @@
-
 import { NextFunction, Request, Response } from "express";
 import { AnyZodObject } from "zod";
 import catchAsyncErrors from "../utils/catchAsyncError";

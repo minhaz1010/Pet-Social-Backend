@@ -1,5 +1,3 @@
-
-
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import httpStatus from "http-status";
 import { TErrorMessages } from "../interface";
@@ -12,7 +10,7 @@ const handleDuplicateError = (err: any) => {
   const errorMessages: TErrorMessages = [
     {
       path: "",
-      message: extractedMessage + ' is already exist'
+      message: extractedMessage + " is already exist",
     },
   ];
 

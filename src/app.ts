@@ -1,7 +1,3 @@
-
-
-
-
 import express, { Request, Response } from "express";
 import cors from "cors";
 import globalErrorHandler from "./app/middleware/globalErrorHandler";
@@ -15,11 +11,7 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Hello dear");
 });
 
-
 app.use(globalErrorHandler);
 
-app.use(notFound)
+app.use(notFound);
 export default app;
-
-
-

@@ -1,5 +1,3 @@
-
-
 import mongoose from "mongoose";
 import httpStatus from "http-status";
 import { TErrorMessages } from "../interface";
@@ -11,7 +9,7 @@ const mongooseValiDationError = (err: mongoose.Error.ValidationError) => {
   const errorMessages: TErrorMessages = propertiesName.map((field) => {
     return {
       path: field,
-      message: field + ' is required ',
+      message: field + " is required ",
     };
   });
 
@@ -23,4 +21,3 @@ const mongooseValiDationError = (err: mongoose.Error.ValidationError) => {
 };
 
 export default mongooseValiDationError;
-
