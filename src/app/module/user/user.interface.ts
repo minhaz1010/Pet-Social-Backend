@@ -6,6 +6,8 @@ export type TMemberShip = "regular" | "premium";
 
 export interface IUser {
   userId: string;
+  userName:string;
+  fullName:string;
   email: string;
   imageURL?: string;
   role: TRole;
