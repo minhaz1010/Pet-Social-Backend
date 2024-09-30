@@ -19,4 +19,11 @@ router.post(
   PostController.createPost,
 );
 
+router.get("/", PostController.getAllPost);
+
+router.get("/:postId", PostController.getSinglePost);
+router.patch("/:postId", PostController.updateASinglePost);
+router.patch("/premium/:postId", PostController.updateAPostInPremium);
+router.delete("/:postId", PostController.deleteASinglePost);
+
 export const PostRouter = router;
