@@ -11,7 +11,7 @@ export interface IUser {
   email: string;
   imageURL?: string;
   phone?:string;
-  address:string;
+  address?:string;
   role: TRole;
   membership: TMemberShip;
   posts?: Schema.Types.ObjectId[];
