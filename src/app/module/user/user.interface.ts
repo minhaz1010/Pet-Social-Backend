@@ -10,6 +10,8 @@ export interface IUser {
   fullName: string;
   email: string;
   imageURL?: string;
+  phone?:string;
+  address:string;
   role: TRole;
   membership: TMemberShip;
   posts?: Schema.Types.ObjectId[];
