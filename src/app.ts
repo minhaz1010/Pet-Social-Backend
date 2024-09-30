@@ -11,7 +11,7 @@ const app = express();
 app.post(
   "/api/webhooks",
   bodyParser.raw({ type: "application/json" }),
-  UserController.createController,
+  UserController.createUpdateDeleteController,
 );
 
 // app.post(
@@ -58,9 +58,11 @@ app.post(
 //     }
 
 //     const { ...attr } = evt.data as UserJSON;
+
 //     const eventType = evt.type;
 
 //     if (eventType === "user.created") {
+//       console.log('ekhane dhukse kiii')
 //       if(attr){
 //          const userId = attr.id;
 //          const userName = attr.username as string ;
@@ -92,6 +94,8 @@ app.use(cors());
 app.use(morgan("dev"));
 
 app.use("/api/v1", IndexRouter);
+
+
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello dear");
