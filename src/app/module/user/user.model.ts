@@ -25,12 +25,12 @@ const userSchema = new Schema<IUser>(
     imageURL: {
       type: String,
     },
-     phone:{
-      type:String
-     },
-     address:{
-      type:String
-     },
+    phone: {
+      type: String,
+    },
+    address: {
+      type: String,
+    },
     posts: [
       {
         type: Schema.Types.ObjectId,
