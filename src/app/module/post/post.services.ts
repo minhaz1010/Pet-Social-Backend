@@ -3,6 +3,7 @@ import AppError from "../../errors/appError";
 import { IPost } from "./post.interface";
 import { Post } from "./post.model";
 
+// NOTE: create post in database
 const createPostInDatabase = async (
   payload: Partial<IPost>,
   imageUrl: string,
@@ -16,6 +17,7 @@ const createPostInDatabase = async (
   return result;
 };
 
+// NOTE: get all posts from database
 const getAllPostInDatabase = async () => {
   const result = await Post.find();
   if (result.length === 0) {
@@ -24,42 +26,44 @@ const getAllPostInDatabase = async () => {
   return result;
 };
 
-const getSinglePostFromDatabase = async (id: string) => {
-  const result = await Post.findById(id);
+// NOTE: get single post from database by postId
+const getSinglePostFromDatabase = async (postId: string) => {
+  const result = await Post.findById(postId);
   if (!result) {
     throw new AppError(httpStatus.BAD_REQUEST, "Sorry, No Post Found");
   }
   return result;
 };
-
+// NOTE: update a single post by postId
 const updateSinglePostFromDatabase = async (
-  id: string,
+  postId: string,
   payload: Partial<IPost>,
 ) => {
-  const postExist = await Post.findById(id);
+  const postExist = await Post.findById(postId);
   if (!postExist) {
     throw new AppError(httpStatus.BAD_REQUEST, "No Post Found For Update");
   }
-  const result = await Post.findByIdAndUpdate(id, payload, { new: true });
+  const result = await Post.findByIdAndUpdate(postId, payload, { new: true });
   return result;
 };
 
-const deleteSinglePostFromDatabase = async (id: string) => {
-  const postExist = await Post.findById(id);
+// NOTE: delete single post by postId
+const deleteSinglePostFromDatabase = async (postId: string) => {
+  const postExist = await Post.findById(postId);
   if (!postExist) {
     throw new AppError(httpStatus.BAD_REQUEST, "No Post Found For Delete");
   }
-  await Post.findByIdAndDelete(id);
+  await Post.findByIdAndDelete(postId);
   return null;
 };
-
-const updateAPostPremiumInDatabase = async (id: string) => {
-  const postExist = await Post.findById(id);
+// NOTE: update a post free to premium by postId
+const updateAPostPremiumInDatabase = async (postId: string) => {
+  const postExist = await Post.findById(postId);
   if (!postExist) {
     throw new AppError(httpStatus.BAD_REQUEST, "No Post Found For Update");
   }
   const result = await Post.findByIdAndUpdate(
-    id,
+    postId,
     { isPremium: true },
     { new: true },
   );
