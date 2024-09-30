@@ -7,4 +7,4 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinaryUpload,
 });
 
-export const mutlerUpload = multer({storage});
+export const mutlerUpload = multer({ storage });

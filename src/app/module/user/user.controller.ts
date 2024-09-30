@@ -4,6 +4,28 @@ import catchAsyncErrors from "../../utils/catchAsyncError";
 import { UserJSON, WebhookEvent } from "@clerk/clerk-sdk-node";
 import { UserServices } from "./user.services";
 
+// const resizeImage = async (req: Request, res: Response, next: NextFunction) => {
+//   if (!req.file) {
+//     return next();
+//   }
+
+//   try {
+//     const result = await cloudinary.uploader.upload(req.file.path, {
+//       transformation: [
+//         { width: 600, height: 600, crop: "limit",quality:"auto",fetch_format:"auto" }
+//       ],
+//       public_id: req.file.filename,
+//       overwrite: true,
+//     });
+
+//     req.file.path = result.secure_url;
+//     req.file.filename = result.public_id;
+//     next();
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
 const createController = catchAsyncErrors(async function (req, res) {
   const WEBHOOK_SECRET = config.CLERK_WEBHOOK_SECRET_KEY;
   if (!WEBHOOK_SECRET) {

@@ -7,9 +7,9 @@ const postSchema = new Schema<IPost>(
       type: String,
       required: true,
     },
-    petType:{
-     type:String,
-     required:true
+    petType: {
+      type: String,
+      required: true,
     },
     content: {
       type: String,

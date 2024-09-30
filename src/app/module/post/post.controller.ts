@@ -4,11 +4,11 @@ import sendResponse from "../../utils/sendResponse";
 
 import { PostServices } from "./post.services";
 
-
-
-
 const createPost = catchAsyncErrors(async (req, res) => {
-  const result = await PostServices.createPostInDatabase(req.body,req.file?.path as string);
+  const result = await PostServices.createPostInDatabase(
+    req.body,
+    req.file?.path as string,
+  );
   sendResponse(res, {
     success: true,
     result,
