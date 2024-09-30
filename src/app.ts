@@ -4,6 +4,7 @@ import globalErrorHandler from "./app/middleware/globalErrorHandler";
 import notFound from "./app/middleware/notFound";
 import bodyParser from "body-parser";
 import { UserController } from "./app/module/user/user.controller";
+import morgan from "morgan";
 const app = express();
 
 app.post(
@@ -87,6 +88,7 @@ app.post(
 
 app.use(express.json());
 app.use(cors());
+app.use(morgan("dev"s))
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello dear");
