@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Successful</title>
+  </head>
+  <body
+    style="
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    "
+  >
+    <div
+      style="
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        text-align: center;
+        max-width: 400px;
+      "
+    >
+      <img
+        src="https://www.beauty-addict.com/wp-content/uploads/2021/02/Payment-success.png"
+        alt="Success Icon"
+        style="width: 100px; height: 100px; margin-bottom: 20px"
+      />
+      <h1 style="color: #4caf50; margin-bottom: 20px">Payment Successful!</h1>
+      <p style="color: #333333; font-size: 18px; margin-bottom: 30px">
+        Thank you for your payment. Your transaction has been completed
+        successfully.
+      </p>
+      <div
+        style="
+          background-color: #f9f9f9;
+          border-radius: 4px;
+          padding: 15px;
+          margin-bottom: 30px;
+        "
+      >
+        <p style="margin: 0; color: #666666">
+          Transaction ID:
+          <strong style="color: #333333">{transactionId}</strong>
+        </p>
+      </div>
+      <button
+        onclick="window.location.href='https://bike-rental-client-theta.vercel.app/'"
+        style="
+          background-color: #4caf50;
+          color: white;
+          padding: 10px 20px;
+          border: none;
+          border-radius: 5px;
+          font-size: 16px;
+          cursor: pointer;
+        "
+      >
+        Go to Home
+      </button>
+    </div>
+  </body>
+</html>
