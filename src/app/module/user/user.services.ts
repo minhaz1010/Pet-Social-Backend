@@ -66,6 +66,8 @@ const getAUserDetails = async (userId: string) => {
     .populate({
       path: "followings",
       select: "userName email imageURL",
+    }).populate({
+      path:"posts",
     });
   return result;
 };
