@@ -7,6 +7,7 @@ import { verifyWebhook } from "../../utils/webhook";
 import AppError from "../../errors/appError";
 import httpStatus from "http-status";
 import sendResponse from "../../utils/sendResponse";
+import { send } from "process";
 
 const createUpdateDeleteController = catchAsyncErrors(
   async function (req, res) {
@@ -47,7 +48,47 @@ const getAllUserFromDatabase = catchAsyncErrors(async (req, res) => {
   });
 });
 
+const getAUserDetails = catchAsyncErrors(async(req,res)=>{
+  // const userId = req.auth.userId;
+  const userId = "user_2mn8oOL0b8rXSChtbd0sDfibfHs";
+  const result = await UserServices.getAUserDetails(userId);
+  sendResponse(res,{
+    statusCode:httpStatus.OK,
+    message:"Successfully Get the user",
+    success:true,
+    result
+  })
+})
+const followUser = catchAsyncErrors(async (req, res) => {
+  const result = await UserServices.followUser(
+    req.params.followerId,
+    req.body.userId,
+  );
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Followed Successfully",
+    result,
+  });
+});
+
+const unfollowUser = catchAsyncErrors(async (req, res) => {
+  const result = await UserServices.unfollowUser(
+    req.params.followerId,
+    req.body.userId,
+  );
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Unfollowed Successfully",
+    result,
+  });
+});
+
 export const UserController = {
   createUpdateDeleteController,
   getAllUserFromDatabase,
+  followUser,
+  unfollowUser,
+  getAUserDetails
 };
