@@ -2,6 +2,7 @@ import config from "../config";
 import axios from "axios";
 
 export type TSendinfo = {
+  month: string;
   userId: string;
   customerName: string;
   customerEmail: string;
@@ -16,7 +17,7 @@ export const initiatePayment = async (paymentData: TSendinfo) => {
       store_id: config.STORE_ID,
       signature_key: config.SIGNATURE_KEY,
       tran_id: paymentData.transactionId,
-      success_url: `${config.BACKEND_URL}/api/v1/payment/confirmation?transactionId=${paymentData.transactionId}&userId=${paymentData.userId}&status=success`,
+      success_url: `${config.BACKEND_URL}/api/v1/payment/confirmation?transactionId=${paymentData.transactionId}&userId=${paymentData.userId}&month=${paymentData.month}&status=success`,
       fail_url: `${config.BACKEND_URL}/api/v1/payment/confirmation?status=failed`,
       cancel_url: "https://bike-rental-client-theta.vercel.app/",
       amount: paymentData.totalPrice,
