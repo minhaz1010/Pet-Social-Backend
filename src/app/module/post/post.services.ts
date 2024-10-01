@@ -10,12 +10,10 @@ const createPostInDatabase = async (
   payload: Partial<IPost>,
   imageUrl: string,
 ) => {
-  
-
   const user = await User.findOne({ userId: payload.author });
   const post = {
     ...payload,
-    author:user?._id,
+    author: user?._id,
     imageURL: imageUrl,
   };
   const session = await mongoose.startSession();
@@ -42,7 +40,10 @@ const createPostInDatabase = async (
     return postData;
   } catch (error) {
     await session.abortTransaction();
-    throw new AppError(httpStatus.BAD_REQUEST,'Could Not Create Post and update the user')
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Could Not Create Post and update the user",
+    );
   } finally {
     session.endSession();
   }
@@ -84,34 +85,40 @@ const deleteSinglePostFromDatabase = async (postId: string) => {
   if (!postExist) {
     throw new AppError(httpStatus.BAD_REQUEST, "No Post Found For Delete");
   }
-  const session  = await mongoose.startSession();
+  const session = await mongoose.startSession();
   try {
     session.startTransaction();
-    const postData = await Post.findByIdAndDelete(postId,{session,new:true});
-    if(!postData){
-      throw new AppError(httpStatus.BAD_REQUEST,'Could not delete the post')
+    const postData = await Post.findByIdAndDelete(postId, {
+      session,
+      new: true,
+    });
+    if (!postData) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Could not delete the post");
     }
-    const updateUser = await User.findByIdAndUpdate(postExist.author,{
-      $pull:{posts:postId}
-    },{
-      new:true,
-      session
-    })
-    if(!updateUser){
-      throw new AppError(httpStatus.BAD_REQUEST,'Could not update the user')
+    const updateUser = await User.findByIdAndUpdate(
+      postExist.author,
+      {
+        $pull: { posts: postId },
+      },
+      {
+        new: true,
+        session,
+      },
+    );
+    if (!updateUser) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Could not update the user");
     }
     await session.commitTransaction();
     return null;
   } catch (error) {
-    await session.abortTransaction()
-    console.log(error);
-    throw new AppError(httpStatus.BAD_REQUEST,'Could Not delete the post and update the user')
-  }
-  finally {
+    await session.abortTransaction();
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Could Not delete the post and update the user",
+    );
+  } finally {
     await session.endSession();
   }
-
-
 };
 // NOTE: update a post free to premium by postId
 const updateAPostPremiumInDatabase = async (postId: string) => {
