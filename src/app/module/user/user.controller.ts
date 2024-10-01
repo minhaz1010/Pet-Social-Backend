@@ -48,17 +48,17 @@ const getAllUserFromDatabase = catchAsyncErrors(async (req, res) => {
   });
 });
 
-const getAUserDetails = catchAsyncErrors(async(req,res)=>{
+const getAUserDetails = catchAsyncErrors(async (req, res) => {
   // const userId = req.auth.userId;
   const userId = "user_2mn8oOL0b8rXSChtbd0sDfibfHs";
   const result = await UserServices.getAUserDetails(userId);
-  sendResponse(res,{
-    statusCode:httpStatus.OK,
-    message:"Successfully Get the user",
-    success:true,
-    result
-  })
-})
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "Successfully Get the user",
+    success: true,
+    result,
+  });
+});
 const followUser = catchAsyncErrors(async (req, res) => {
   const result = await UserServices.followUser(
     req.params.followerId,
@@ -90,5 +90,5 @@ export const UserController = {
   getAllUserFromDatabase,
   followUser,
   unfollowUser,
-  getAUserDetails
+  getAUserDetails,
 };

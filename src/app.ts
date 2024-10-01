@@ -95,8 +95,6 @@ app.use(morgan("dev"));
 
 app.use("/api/v1", IndexRouter);
 
-
-
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello dear");
 });

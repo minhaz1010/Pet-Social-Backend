@@ -55,29 +55,20 @@ const getAllUserFromDatabase = async () => {
   return result;
 };
 
-
-
 // NOTE: a user details(fe e hit korle okhan theke clerk er maddhome req.auth.userId hote information pabo then get korbo ekhon manually kortesi)
 
-const getAUserDetails = async(userId:string)=>{
-  const result = await User.findOne({userId}).populate({
-    path:"followers",
-    select:"userName email imageURL"
-  }).populate({
-    path:"followings",
-    select:"userName email imageURL"
-  });
+const getAUserDetails = async (userId: string) => {
+  const result = await User.findOne({ userId })
+    .populate({
+      path: "followers",
+      select: "userName email imageURL",
+    })
+    .populate({
+      path: "followings",
+      select: "userName email imageURL",
+    });
   return result;
-}
-
-
-
-
-
-
-
-
-
+};
 
 // NOTE: follow a user/author by followerId(whom to follow)
 const followUser = async (followerId: string, followedUserId: string) => {
@@ -240,5 +231,4 @@ export const UserServices = {
   getAUserDetails,
   followUser,
   unfollowUser,
-
 };
