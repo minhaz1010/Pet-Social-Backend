@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import {  Types } from "mongoose";
 export type TPostType = "TIP" | "STORY";
 
 export interface IPost {
@@ -7,7 +7,7 @@ export interface IPost {
   petType: string;
   imageURL?: string;
   postType: TPostType;
-  author: Schema.Types.ObjectId;
+  author: Types.ObjectId;
   isPremium: boolean;
   likes: number;
   dislikes: number;
