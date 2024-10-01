@@ -34,19 +34,19 @@ const userSchema = new Schema<IUser>(
     posts: [
       {
         type: Schema.Types.ObjectId,
-        ref: "POST",
+        ref: "Post",
       },
     ],
     followers: [
       {
         type: Schema.Types.ObjectId,
-        ref: "USER",
+        ref: "User",
       },
     ],
     followings: [
       {
         type: Schema.Types.ObjectId,
-        ref: "USER",
+        ref: "User",
       },
     ],
     membership: {
@@ -65,4 +65,4 @@ const userSchema = new Schema<IUser>(
   },
 );
 
-export const User = model<IUser>("USER", userSchema);
+export const User = model<IUser>("User", userSchema);
