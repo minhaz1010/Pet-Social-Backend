@@ -2,19 +2,50 @@ import httpStatus from "http-status";
 import AppError from "../../errors/appError";
 import { IPost } from "./post.interface";
 import { Post } from "./post.model";
+import { User } from "../user/user.model";
+import mongoose from "mongoose";
 
 // NOTE: create post in database
 const createPostInDatabase = async (
   payload: Partial<IPost>,
   imageUrl: string,
 ) => {
+  
+
+  const user = await User.findOne({ userId: payload.author });
   const post = {
     ...payload,
+    author:user?._id,
     imageURL: imageUrl,
   };
-
-  const result = await Post.create(post);
-  return result;
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+    const postData = await Post.create([post], { session });
+    if (postData.length === 0) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Could Not Create Post");
+    }
+    const updatedUser = await User.findByIdAndUpdate(
+      user?._id,
+      {
+        $push: { posts: postData[0]._id },
+      },
+      {
+        new: true,
+        session,
+      },
+    );
+    if (!updatedUser) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Could Not Update User");
+    }
+    await session.commitTransaction();
+    return postData;
+  } catch (error) {
+    await session.abortTransaction();
+    throw new AppError(httpStatus.BAD_REQUEST,'Could Not Create Post and update the user')
+  } finally {
+    session.endSession();
+  }
 };
 
 // NOTE: get all posts from database
