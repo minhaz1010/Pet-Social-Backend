@@ -84,8 +84,34 @@ const deleteSinglePostFromDatabase = async (postId: string) => {
   if (!postExist) {
     throw new AppError(httpStatus.BAD_REQUEST, "No Post Found For Delete");
   }
-  await Post.findByIdAndDelete(postId);
-  return null;
+  const session  = await mongoose.startSession();
+  try {
+    session.startTransaction();
+    const postData = await Post.findByIdAndDelete(postId,{session,new:true});
+    if(!postData){
+      throw new AppError(httpStatus.BAD_REQUEST,'Could not delete the post')
+    }
+    const updateUser = await User.findByIdAndUpdate(postExist.author,{
+      $pull:{posts:postId}
+    },{
+      new:true,
+      session
+    })
+    if(!updateUser){
+      throw new AppError(httpStatus.BAD_REQUEST,'Could not update the user')
+    }
+    await session.commitTransaction();
+    return null;
+  } catch (error) {
+    await session.abortTransaction()
+    console.log(error);
+    throw new AppError(httpStatus.BAD_REQUEST,'Could Not delete the post and update the user')
+  }
+  finally {
+    await session.endSession();
+  }
+
+
 };
 // NOTE: update a post free to premium by postId
 const updateAPostPremiumInDatabase = async (postId: string) => {
