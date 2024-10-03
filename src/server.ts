@@ -20,7 +20,7 @@ async function main() {
 
 main();
 const HTTP_SERVER_ERROR = 500;
-app.use(function (err, req: Request, res: Response, next: NextFunction) {
+app.use(function (err:any, req: Request, res: Response, next: NextFunction) {
   if (res.headersSent) {
     return next(err);
   }
