@@ -3,13 +3,20 @@ import AppError from "../../errors/appError";
 import { Post } from "../post/post.model";
 import { IComment } from "./comment.interface";
 import { Comment } from "./comment.model";
+import { User } from "../user/user.model";
 // NOTE: post a comment in a  post
 const postAComment = async (postId: string, payload: Partial<IComment>) => {
   const postExist = await Post.findById(postId);
   if (!postExist) {
     throw new AppError(httpStatus.BAD_REQUEST, "No Post Found ");
   }
-  const result = await Comment.create(payload);
+  const userData = await User.findOne({userId:payload.author});
+  const updatePayload = {
+    ...payload,
+    post:postId,
+    author:userData?._id
+  }
+  const result = await Comment.create(updatePayload);
   return result;
 };
 

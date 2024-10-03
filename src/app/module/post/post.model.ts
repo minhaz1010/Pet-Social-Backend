@@ -30,7 +30,7 @@ const postSchema = new Schema<IPost>(
     author: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: "USER",
+      ref: "User",
     },
     likes: {
       type: Number,
@@ -40,6 +40,14 @@ const postSchema = new Schema<IPost>(
       type: Number,
       default: 0,
     },
+    likedBy:[{
+      type:Schema.Types.ObjectId,
+      red:"User"
+    }],
+    dislikedBy:[{
+      type:Schema.Types.ObjectId,
+      ref:"User"
+    }]
   },
   {
     timestamps: true,

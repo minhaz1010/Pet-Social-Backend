@@ -3,8 +3,6 @@ import z from "zod";
 const createCommentValidation = z.object({
   body: z.object({
     content: z.string(),
-    author: z.string(),
-    post: z.string(),
   }),
 });
 

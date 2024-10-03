@@ -50,17 +50,42 @@ const createPostInDatabase = async (
 };
 
 // NOTE: get all posts from database
-const getAllPostInDatabase = async () => {
-  const result = await Post.find();
+const getAllPostInDatabase = async (page: number, limit: number, category?: string) => {
+  let query = Post.find();
+  
+  if (category) {
+    query = query.where('postType').equals(category);
+  }
+  
+  const result = await query
+    .skip((page - 1) * limit)
+    .limit(limit)
+    .populate({
+      path: "author",
+      select: "userName imageURL"
+    })
+    .sort("-createdAt");
+
+  const totalPosts = await Post.countDocuments(category ? { postType:category } : {});
+
   if (result.length === 0) {
     throw new AppError(httpStatus.BAD_REQUEST, "Sorry, No Posts Found");
   }
-  return result;
+
+  return {
+    result,
+    totalPosts
+  };
 };
+
+
+   
+
+
 
 // NOTE: get single post from database by postId
 const getSinglePostFromDatabase = async (postId: string) => {
-  const result = await Post.findById(postId);
+  const result = await Post.findById(postId).populate("author");
   if (!result) {
     throw new AppError(httpStatus.BAD_REQUEST, "Sorry, No Post Found");
   }
@@ -134,6 +159,61 @@ const updateAPostPremiumInDatabase = async (postId: string) => {
   return result;
 };
 
+// likes and dislikes
+
+const likeAPost = async(postId:string,userId:string)=>{
+  const userData = await User.findOne({userId});
+  const postData = await Post.findById(postId);
+  const userObjectId = new mongoose.Types.ObjectId(userData?._id);
+  if(!postData){
+    throw new AppError(httpStatus.BAD_REQUEST,'No Post Found');
+  }
+  if(postData.dislikedBy.includes(userObjectId)){
+    postData.dislikedBy = postData.dislikedBy.filter((id)=>id===userObjectId);
+    postData.dislikes -=1;
+  }
+  if(postData.likedBy.includes(userObjectId)){
+    postData.likedBy = postData.likedBy.filter((id)=> id ===userObjectId);
+    if(postData.likes>0){
+      postData.likes -=1;
+    }
+  }
+  else {
+    postData.likedBy.push(userObjectId);
+    postData.likes +=1;
+  }
+  const result = await postData.save();
+  return result
+}
+
+const disLikeAPost = async(postId:string,userId:string)=>{
+  const userData = await User.findOne({userId});
+  const postData = await Post.findById(postId);
+  const userObjectId = new mongoose.Types.ObjectId(userData?._id);
+  if(!postData){
+    throw new AppError(httpStatus.BAD_REQUEST,'No Post Found');
+  }
+  if(postData.likedBy.includes(userObjectId)){
+    postData.likedBy = postData.likedBy.filter((id)=>id===userObjectId);
+    postData.likes -=1;
+  }
+  if(postData?.dislikedBy.includes(userObjectId)){
+       postData.dislikedBy = postData.dislikedBy.filter((id)=>id === userObjectId);
+       if(postData.dislikedBy){
+         postData.dislikes -=1;
+       }
+  }
+  else {
+    postData.dislikedBy.push(userObjectId);
+    postData.dislikes +=1;
+  }
+
+ 
+
+  const result = await postData.save();
+  return result
+} 
+
 export const PostServices = {
   createPostInDatabase,
   getAllPostInDatabase,
@@ -141,4 +221,6 @@ export const PostServices = {
   deleteSinglePostFromDatabase,
   updateSinglePostFromDatabase,
   updateAPostPremiumInDatabase,
+  likeAPost,
+  disLikeAPost
 };

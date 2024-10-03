@@ -5,6 +5,8 @@ import { CommentServices } from "./comment.services";
 
 // NOTE: post a comment in a post controller
 const postAComment = catchAsyncErrors(async (req, res) => {
+  const userId = req.auth.userId;
+  req.body.author = userId;
   const result = await CommentServices.postAComment(
     req.params.postId,
     req.body,

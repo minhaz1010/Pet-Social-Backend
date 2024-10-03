@@ -7,7 +7,6 @@ import { verifyWebhook } from "../../utils/webhook";
 import AppError from "../../errors/appError";
 import httpStatus from "http-status";
 import sendResponse from "../../utils/sendResponse";
-import { send } from "process";
 
 const createUpdateDeleteController = catchAsyncErrors(
   async function (req, res) {

@@ -11,4 +11,6 @@ export interface IPost {
   isPremium: boolean;
   likes: number;
   dislikes: number;
+  likedBy:Types.ObjectId[];
+  dislikedBy:Types.ObjectId[];
 }

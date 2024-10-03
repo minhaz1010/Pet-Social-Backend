@@ -21,7 +21,9 @@ const createPost = catchAsyncErrors(async (req, res) => {
 
 // NOTE: get all post controller
 const getAllPost = catchAsyncErrors(async (req, res) => {
-  const result = await PostServices.getAllPostInDatabase();
+  const {page,limit,category} = req.query;
+  const result = await PostServices.getAllPostInDatabase(Number(page),Number(limit),category as string);
+
   sendResponse(res, {
     success: true,
     result,
@@ -81,6 +83,39 @@ const updateAPostInPremium = catchAsyncErrors(async (req, res) => {
     message: "Successfully Update A Post In Premium",
   });
 });
+
+
+
+const likeAPost = catchAsyncErrors(async(req,res)=>{
+  // const userId = req.auth.userId;
+  const userId="user_2mn8oOL0b8rXSChtbd0sDfibfHs";
+  const postId = req.params.postId;
+  const result = await PostServices.likeAPost(postId,userId);
+  sendResponse(res,{
+    success:true,
+    message:"Successfully Liked The Post",
+    result,
+    statusCode:httpStatus.OK
+  })
+})
+
+const disLikeAPost = catchAsyncErrors(async(req,res)=>{
+  // const userId = req.auth.userId;
+  const userId="user_2mn8oOL0b8rXSChtbd0sDfibfHs";
+  const postId = req.params.postId;
+  const result = await PostServices.disLikeAPost(postId,userId);
+  sendResponse(res,{
+    success:true,
+    message:"Successfully Dislike The Post",
+    result,
+    statusCode:httpStatus.OK
+  })
+})
+
+
+
+
+
 export const PostController = {
   createPost,
   getAllPost,
@@ -88,4 +123,6 @@ export const PostController = {
   updateAPostInPremium,
   updateASinglePost,
   deleteASinglePost,
+  likeAPost,
+  disLikeAPost
 };
