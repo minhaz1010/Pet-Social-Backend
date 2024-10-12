@@ -1,9 +1,11 @@
-import { Schema } from "mongoose";
+import { Types } from "mongoose";
 
 export interface IComment {
   content: string;
-  author: Schema.Types.ObjectId;
-  post: Schema.Types.ObjectId;
+  author: Types.ObjectId;
+  post: Types.ObjectId;
   likes: number;
+  likedBy: Types.ObjectId[];
+  dislikedBy: Types.ObjectId[];
   dislikes: number;
 }
