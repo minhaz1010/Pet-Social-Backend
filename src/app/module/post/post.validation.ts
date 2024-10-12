@@ -8,6 +8,14 @@ const createPostValidation = z.object({
     postType: z.enum(["TIP", "STORY"]),
     author: z.string(),
     isPremium: z.boolean().optional(),
+    image: z
+      .array(
+        z.object({
+          public_id: z.string().min(1, "Public ID is required"),
+          secure_url: z.string().url("Invalid URL format"),
+        }),
+      )
+      .optional(),
   }),
 });
 
@@ -16,7 +24,7 @@ const updatePostValidation = z.object({
     title: z.string().optional(),
     content: z.string().optional(),
     petType: z.string().optional(),
-    imageURL: z.string().url().optional(),
+    image: z.string().url().optional(),
     postType: z.enum(["TIP", "STORY"]).optional(),
     isPremium: z.boolean().optional(),
     likes: z.number().optional(),
