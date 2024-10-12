@@ -11,7 +11,6 @@ import sendResponse from "../../utils/sendResponse";
 const createUpdateDeleteController = catchAsyncErrors(
   async function (req, res) {
     let evt;
-
     try {
       evt = verifyWebhook(req);
     } catch (err) {
@@ -48,8 +47,8 @@ const getAllUserFromDatabase = catchAsyncErrors(async (req, res) => {
 });
 
 const getAUserDetails = catchAsyncErrors(async (req, res) => {
-  // const userId = req.auth.userId;
-  const userId = "user_2mn8oOL0b8rXSChtbd0sDfibfHs";
+  const userId = req.auth.userId as string;
+  // const userId = "user_2n8JsKyG5g4roI6D3zHissu8imU";
   const result = await UserServices.getAUserDetails(userId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -58,11 +57,23 @@ const getAUserDetails = catchAsyncErrors(async (req, res) => {
     result,
   });
 });
+
+const getAUserDetailsByUserName = catchAsyncErrors(async (req, res) => {
+  const userName = req.params.userName;
+  const result = await UserServices.getAUserDetailsByUserName(userName);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "Successfully Get the user details",
+    success: true,
+    result,
+  });
+});
+
 const followUser = catchAsyncErrors(async (req, res) => {
-  const result = await UserServices.followUser(
-    req.params.followerId,
-    req.body.userId,
-  );
+  const userId = req.auth.userId as string;
+  // console.log(userId,'userId');
+  console.log(req.params.followerId);
+  const result = await UserServices.followUser(req.params.followerId, userId);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -72,10 +83,9 @@ const followUser = catchAsyncErrors(async (req, res) => {
 });
 
 const unfollowUser = catchAsyncErrors(async (req, res) => {
-  const result = await UserServices.unfollowUser(
-    req.params.followerId,
-    req.body.userId,
-  );
+  const userId = req.auth.userId as string;
+  // const userId = "user_2n8JsKyG5g4roI6D3zHissu8imU"
+  const result = await UserServices.unfollowUser(req.params.followerId, userId);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -90,4 +100,5 @@ export const UserController = {
   followUser,
   unfollowUser,
   getAUserDetails,
+  getAUserDetailsByUserName,
 };

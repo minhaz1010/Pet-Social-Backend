@@ -7,8 +7,8 @@ import mongoose from "mongoose";
 const createUserInDatabaseFromClerk = async (payload: UserJSON) => {
   if (payload) {
     const userId = payload.id;
-    const userName = payload.username as string;
-    const fullName = `${payload.first_name as string} ${payload.last_name as string}`;
+    const userName = (payload.username as string) || "haha";
+    const fullName = `${(payload.first_name as string) || "srk"} ${(payload.last_name as string) || "salman"}`;
     const email = payload.email_addresses[0].email_address;
     const imageURL = payload.image_url;
     await clerkClient.users.updateUser(userId, {
@@ -75,8 +75,6 @@ const getAUserDetails = async (userId: string) => {
 
 // NOTE: follow a user/author by followerId(whom to follow)
 const followUser = async (followerId: string, followedUserId: string) => {
-  // followerId ==> minhaz1111
-  // followedUserId ==> minhaz1010
   // ^ jake follow korbo take khujlam
   const followerUser = await User.findById(followerId);
   // ^ naa paile bolbo paai naai
@@ -84,16 +82,18 @@ const followUser = async (followerId: string, followedUserId: string) => {
     throw new AppError(httpStatus.BAD_REQUEST, "Follower user not found");
   }
   //  ^ je user follow korbe taake khujlam
-  const followedUser = await User.findById(followedUserId);
+  const followedUser = await User.findOne({ userId: followedUserId });
   // ^ naa paile bolbo paai naai
   if (!followedUser) {
     throw new AppError(httpStatus.BAD_REQUEST, "User to be followed not found");
   }
 
+  const followedUser_id = followedUser._id;
   //  ^ je user follow korbe sei user er id ke object id te rupantor korlam
-  const followedUserObjectId = new mongoose.Types.ObjectId(followedUserId);
+  const followedUserObjectId = new mongoose.Types.ObjectId(followedUser_id);
+
   //  ^ check kortesi je user ki aage theke follower ke follow kore kina
-  const isAlreadyFollowing = followerUser.followings?.includes(
+  const isAlreadyFollowing = followerUser.followers?.includes(
     followedUserObjectId,
   ) as boolean;
   //  ^ jodi user aage theke follow kore tahole ei message dibo
@@ -122,7 +122,7 @@ const followUser = async (followerId: string, followedUserId: string) => {
     }
     //  ^ je user follow korbe taar followers e followerId dhukaiya dilam
     const updatedFollowedUser = await User.findByIdAndUpdate(
-      followedUserId,
+      followedUserObjectId,
       { $push: { followings: followerId } },
       { new: true, session },
     );
@@ -160,12 +160,13 @@ const unfollowUser = async (followerId: string, followedUserId: string) => {
     throw new AppError(httpStatus.BAD_REQUEST, "Follower user not found");
   }
   // ^ check kortesi je user unfollow korbe se ache kina
-  const followedUser = await User.findById(followedUserId);
+  const followedUser = await User.findOne({ userId: followedUserId });
   if (!followedUser) {
     throw new AppError(httpStatus.BAD_REQUEST, "User to be followed not found");
   }
+  const followerUser_id = followedUser._id;
 
-  const followedUserObjectId = new mongoose.Types.ObjectId(followedUserId);
+  const followedUserObjectId = new mongoose.Types.ObjectId(followerUser_id);
 
   //  check kortesi je user follow korbe sei follower er followings e userId ache kina
   const isAlreadyFollowing = followerUser.followers?.includes(
@@ -198,7 +199,7 @@ const unfollowUser = async (followerId: string, followedUserId: string) => {
 
     // je unfollow korbe taar followings theke follwerId remove korlam hehe
     const updatedFollowedUser = await User.findByIdAndUpdate(
-      followedUserId,
+      followedUserObjectId,
       { $pull: { followings: followerId } },
       { new: true, session },
     );
@@ -226,6 +227,26 @@ const unfollowUser = async (followerId: string, followedUserId: string) => {
   }
 };
 
+const getAUserDetailsByUserName = async (userName: string) => {
+  const result = await User.findOne({ userName })
+    .populate({
+      path: "followers",
+      select: "userName email imageURL userId",
+    })
+    .populate({
+      path: "followings",
+      select: "userName email imageURL userId",
+    })
+    .populate({
+      path: "posts",
+      populate: {
+        path: "author",
+        select: "userName email imageURL",
+      },
+    });
+  return result;
+};
+
 export const UserServices = {
   createUserInDatabaseFromClerk,
   updateUserInDatabaseFromClerk,
@@ -234,4 +255,5 @@ export const UserServices = {
   getAUserDetails,
   followUser,
   unfollowUser,
+  getAUserDetailsByUserName,
 };
