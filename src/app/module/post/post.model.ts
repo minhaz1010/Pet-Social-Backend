@@ -15,9 +15,7 @@ const postSchema = new Schema<IPost>(
       type: String,
       required: true,
     },
-    imageURL: {
-      type: String,
-    },
+
     isPremium: {
       type: Boolean,
       default: false,
@@ -40,14 +38,24 @@ const postSchema = new Schema<IPost>(
       type: Number,
       default: 0,
     },
-    likedBy:[{
-      type:Schema.Types.ObjectId,
-      red:"User"
-    }],
-    dislikedBy:[{
-      type:Schema.Types.ObjectId,
-      ref:"User"
-    }]
+    image: [
+      {
+        public_id: { type: String },
+        secure_url: { type: String },
+      },
+    ],
+    likedBy: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    dislikedBy: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   {
     timestamps: true,
