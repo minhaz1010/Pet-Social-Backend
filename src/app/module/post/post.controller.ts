@@ -7,10 +7,7 @@ import { PostServices } from "./post.services";
 // NOTE: create post controller
 
 const createPost = catchAsyncErrors(async (req, res) => {
-  const result = await PostServices.createPostInDatabase(
-    req.body,
-    req.file?.path as string,
-  );
+  const result = await PostServices.createPostInDatabase(req.body);
   sendResponse(res, {
     success: true,
     result,
@@ -21,8 +18,12 @@ const createPost = catchAsyncErrors(async (req, res) => {
 
 // NOTE: get all post controller
 const getAllPost = catchAsyncErrors(async (req, res) => {
-  const {page,limit,category} = req.query;
-  const result = await PostServices.getAllPostInDatabase(Number(page),Number(limit),category as string);
+  const { page, limit, category } = req.query;
+  const result = await PostServices.getAllPostInDatabase(
+    Number(page),
+    Number(limit),
+    category as string,
+  );
 
   sendResponse(res, {
     success: true,
@@ -84,37 +85,30 @@ const updateAPostInPremium = catchAsyncErrors(async (req, res) => {
   });
 });
 
-
-
-const likeAPost = catchAsyncErrors(async(req,res)=>{
-  // const userId = req.auth.userId;
-  const userId="user_2mn8oOL0b8rXSChtbd0sDfibfHs";
+const likeAPost = catchAsyncErrors(async (req, res) => {
+  const userId = req.auth.userId as string;
   const postId = req.params.postId;
-  const result = await PostServices.likeAPost(postId,userId);
-  sendResponse(res,{
-    success:true,
-    message:"Successfully Liked The Post",
+  const result = await PostServices.likeAPost(postId, userId);
+  sendResponse(res, {
+    success: true,
+    message: "Successfully Liked The Post",
     result,
-    statusCode:httpStatus.OK
-  })
-})
+    statusCode: httpStatus.OK,
+  });
+});
 
-const disLikeAPost = catchAsyncErrors(async(req,res)=>{
-  // const userId = req.auth.userId;
-  const userId="user_2mn8oOL0b8rXSChtbd0sDfibfHs";
+const disLikeAPost = catchAsyncErrors(async (req, res) => {
+  const userId = req.auth.userId as string;
+  // const userId="user_2mn8oOL0b8rXSChtbd0sDfibfHs";
   const postId = req.params.postId;
-  const result = await PostServices.disLikeAPost(postId,userId);
-  sendResponse(res,{
-    success:true,
-    message:"Successfully Dislike The Post",
+  const result = await PostServices.disLikeAPost(postId, userId);
+  sendResponse(res, {
+    success: true,
+    message: "Successfully Dislike The Post",
     result,
-    statusCode:httpStatus.OK
-  })
-})
-
-
-
-
+    statusCode: httpStatus.OK,
+  });
+});
 
 export const PostController = {
   createPost,
@@ -124,5 +118,5 @@ export const PostController = {
   updateASinglePost,
   deleteASinglePost,
   likeAPost,
-  disLikeAPost
+  disLikeAPost,
 };

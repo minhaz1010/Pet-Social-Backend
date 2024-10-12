@@ -6,15 +6,12 @@ import { User } from "../user/user.model";
 import mongoose from "mongoose";
 
 // NOTE: create post in database
-const createPostInDatabase = async (
-  payload: Partial<IPost>,
-  imageUrl: string,
-) => {
+const createPostInDatabase = async (payload: Partial<IPost>) => {
   const user = await User.findOne({ userId: payload.author });
   const post = {
     ...payload,
     author: user?._id,
-    imageURL: imageUrl,
+    image: payload.image,
   };
   const session = await mongoose.startSession();
   try {
@@ -50,23 +47,29 @@ const createPostInDatabase = async (
 };
 
 // NOTE: get all posts from database
-const getAllPostInDatabase = async (page: number, limit: number, category?: string) => {
+const getAllPostInDatabase = async (
+  page: number,
+  limit: number,
+  category?: string,
+) => {
   let query = Post.find();
-  
+
   if (category) {
-    query = query.where('postType').equals(category);
+    query = query.where("postType").equals(category);
   }
-  
+
   const result = await query
     .skip((page - 1) * limit)
     .limit(limit)
     .populate({
       path: "author",
-      select: "userName imageURL"
+      select: "userName imageURL userId followers followings",
     })
     .sort("-createdAt");
 
-  const totalPosts = await Post.countDocuments(category ? { postType:category } : {});
+  const totalPosts = await Post.countDocuments(
+    category ? { postType: category } : {},
+  );
 
   if (result.length === 0) {
     throw new AppError(httpStatus.BAD_REQUEST, "Sorry, No Posts Found");
@@ -74,14 +77,9 @@ const getAllPostInDatabase = async (page: number, limit: number, category?: stri
 
   return {
     result,
-    totalPosts
+    totalPosts,
   };
 };
-
-
-   
-
-
 
 // NOTE: get single post from database by postId
 const getSinglePostFromDatabase = async (postId: string) => {
@@ -161,58 +159,58 @@ const updateAPostPremiumInDatabase = async (postId: string) => {
 
 // likes and dislikes
 
-const likeAPost = async(postId:string,userId:string)=>{
-  const userData = await User.findOne({userId});
+const likeAPost = async (postId: string, userId: string) => {
+  const userData = await User.findOne({ userId });
   const postData = await Post.findById(postId);
   const userObjectId = new mongoose.Types.ObjectId(userData?._id);
-  if(!postData){
-    throw new AppError(httpStatus.BAD_REQUEST,'No Post Found');
+  if (!postData) {
+    throw new AppError(httpStatus.BAD_REQUEST, "No Post Found");
   }
-  if(postData.dislikedBy.includes(userObjectId)){
-    postData.dislikedBy = postData.dislikedBy.filter((id)=>id===userObjectId);
-    postData.dislikes -=1;
+  if (postData.dislikedBy.includes(userObjectId)) {
+    postData.dislikedBy = postData.dislikedBy.filter(
+      (id) => id === userObjectId,
+    );
+    postData.dislikes -= 1;
   }
-  if(postData.likedBy.includes(userObjectId)){
-    postData.likedBy = postData.likedBy.filter((id)=> id ===userObjectId);
-    if(postData.likes>0){
-      postData.likes -=1;
+  if (postData.likedBy.includes(userObjectId)) {
+    postData.likedBy = postData.likedBy.filter((id) => id === userObjectId);
+    if (postData.likes > 0) {
+      postData.likes -= 1;
     }
-  }
-  else {
+  } else {
     postData.likedBy.push(userObjectId);
-    postData.likes +=1;
+    postData.likes += 1;
   }
   const result = await postData.save();
-  return result
-}
+  return result;
+};
 
-const disLikeAPost = async(postId:string,userId:string)=>{
-  const userData = await User.findOne({userId});
+const disLikeAPost = async (postId: string, userId: string) => {
+  const userData = await User.findOne({ userId });
   const postData = await Post.findById(postId);
   const userObjectId = new mongoose.Types.ObjectId(userData?._id);
-  if(!postData){
-    throw new AppError(httpStatus.BAD_REQUEST,'No Post Found');
+  if (!postData) {
+    throw new AppError(httpStatus.BAD_REQUEST, "No Post Found");
   }
-  if(postData.likedBy.includes(userObjectId)){
-    postData.likedBy = postData.likedBy.filter((id)=>id===userObjectId);
-    postData.likes -=1;
+  if (postData.likedBy.includes(userObjectId)) {
+    postData.likedBy = postData.likedBy.filter((id) => id === userObjectId);
+    postData.likes -= 1;
   }
-  if(postData?.dislikedBy.includes(userObjectId)){
-       postData.dislikedBy = postData.dislikedBy.filter((id)=>id === userObjectId);
-       if(postData.dislikedBy){
-         postData.dislikes -=1;
-       }
-  }
-  else {
+  if (postData?.dislikedBy.includes(userObjectId)) {
+    postData.dislikedBy = postData.dislikedBy.filter(
+      (id) => id === userObjectId,
+    );
+    if (postData.dislikedBy) {
+      postData.dislikes -= 1;
+    }
+  } else {
     postData.dislikedBy.push(userObjectId);
-    postData.dislikes +=1;
+    postData.dislikes += 1;
   }
-
- 
 
   const result = await postData.save();
-  return result
-} 
+  return result;
+};
 
 export const PostServices = {
   createPostInDatabase,
@@ -222,5 +220,5 @@ export const PostServices = {
   updateSinglePostFromDatabase,
   updateAPostPremiumInDatabase,
   likeAPost,
-  disLikeAPost
+  disLikeAPost,
 };
