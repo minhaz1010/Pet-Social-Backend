@@ -19,7 +19,7 @@ export const initiatePayment = async (paymentData: TSendinfo) => {
       tran_id: paymentData.transactionId,
       success_url: `${config.BACKEND_URL}/api/v1/payment/confirmation?transactionId=${paymentData.transactionId}&userId=${paymentData.userId}&month=${paymentData.month}&status=success`,
       fail_url: `${config.BACKEND_URL}/api/v1/payment/confirmation?status=failed`,
-      cancel_url: "https://bike-rental-client-theta.vercel.app/",
+      cancel_url: "https://petbook-frontend.vercel.app/",
       amount: paymentData.totalPrice,
       currency: "BDT",
       desc: "Merchant Registration Payment",
