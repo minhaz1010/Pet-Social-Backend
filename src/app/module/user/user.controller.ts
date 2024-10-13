@@ -37,6 +37,13 @@ const createUpdateDeleteController = catchAsyncErrors(
 );
 
 const getAllUserFromDatabase = catchAsyncErrors(async (req, res) => {
+  const { sessionClaims } = req.auth;
+  if (sessionClaims?.metadata.role !== "ADMIN") {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Sorry you have no access to this route",
+    );
+  }
   const result = await UserServices.getAllUserFromDatabase();
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -48,7 +55,6 @@ const getAllUserFromDatabase = catchAsyncErrors(async (req, res) => {
 
 const getAUserDetails = catchAsyncErrors(async (req, res) => {
   const userId = req.auth.userId as string;
-  // const userId = "user_2n8JsKyG5g4roI6D3zHissu8imU";
   const result = await UserServices.getAUserDetails(userId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -94,6 +100,40 @@ const unfollowUser = catchAsyncErrors(async (req, res) => {
   });
 });
 
+const changeRole = catchAsyncErrors(async (req, res) => {
+  const { sessionClaims } = req.auth;
+  if (sessionClaims?.metadata.role !== "ADMIN") {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Sorry you have no access to this route",
+    );
+  }
+  const result = await UserServices.changeRole(req.params.id, req.body.role);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Change role Successfully",
+    result,
+  });
+});
+
+export const deleteAUser = catchAsyncErrors(async (req, res) => {
+  const { sessionClaims } = req.auth;
+  if (sessionClaims?.metadata.role !== "ADMIN") {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "You have no access to this route",
+    );
+  }
+  const result = await UserServices.deleteAUserInDatabase(req.params.id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "Successfully deleted",
+    result,
+    success: true,
+  });
+});
+
 export const UserController = {
   createUpdateDeleteController,
   getAllUserFromDatabase,
@@ -101,4 +141,6 @@ export const UserController = {
   unfollowUser,
   getAUserDetails,
   getAUserDetailsByUserName,
+  changeRole,
+  deleteAUser,
 };

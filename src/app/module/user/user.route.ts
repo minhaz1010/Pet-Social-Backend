@@ -18,4 +18,22 @@ router.post(
   UserController.unfollowUser,
 );
 
+router.get(
+  "/get-all-users",
+  ClerkExpressRequireAuth(),
+  UserController.getAllUserFromDatabase,
+);
+
+router.patch(
+  "/update-role/:id",
+  ClerkExpressRequireAuth(),
+  UserController.changeRole,
+);
+
+router.delete(
+  "/delete/:id",
+  ClerkExpressRequireAuth(),
+  UserController.deleteAUser,
+);
+
 export const UserRouter = router;

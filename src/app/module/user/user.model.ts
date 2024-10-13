@@ -49,6 +49,7 @@ const userSchema = new Schema<IUser>(
         ref: "User",
       },
     ],
+
     membership: {
       type: String,
       enum: ["REGULAR", "PREMIUM"],

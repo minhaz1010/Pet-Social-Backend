@@ -247,6 +247,26 @@ const getAUserDetailsByUserName = async (userName: string) => {
   return result;
 };
 
+// userId is mongodb _id
+export const changeRole = async (id: string, role: string) => {
+  const userData = await User.findById(id);
+  await clerkClient.users.updateUser(userData?.userId as string, {
+    publicMetadata: { role },
+  });
+
+  const updatedUser = await User.findByIdAndUpdate(id, { role }, { new: true });
+
+  return updatedUser;
+};
+
+//  id is mongodb _id
+export const deleteAUserInDatabase = async (id: string) => {
+  const userData = await User.findById(id);
+  await clerkClient.users.deleteUser(userData?.userId as string);
+  await User.findByIdAndDelete(id);
+  return null;
+};
+
 export const UserServices = {
   createUserInDatabaseFromClerk,
   updateUserInDatabaseFromClerk,
@@ -256,4 +276,6 @@ export const UserServices = {
   followUser,
   unfollowUser,
   getAUserDetailsByUserName,
+  changeRole,
+  deleteAUserInDatabase,
 };
