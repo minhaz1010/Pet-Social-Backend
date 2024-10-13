@@ -15,9 +15,6 @@ const postSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
-    imageURL: {
-        type: String,
-    },
     isPremium: {
         type: Boolean,
         default: false,
@@ -40,14 +37,24 @@ const postSchema = new mongoose_1.Schema({
         type: Number,
         default: 0,
     },
-    likedBy: [{
+    image: [
+        {
+            public_id: { type: String },
+            secure_url: { type: String },
+        },
+    ],
+    likedBy: [
+        {
             type: mongoose_1.Schema.Types.ObjectId,
-            red: "User"
-        }],
-    dislikedBy: [{
+            ref: "User",
+        },
+    ],
+    dislikedBy: [
+        {
             type: mongoose_1.Schema.Types.ObjectId,
-            ref: "User"
-        }]
+            ref: "User",
+        },
+    ],
 }, {
     timestamps: true,
 });

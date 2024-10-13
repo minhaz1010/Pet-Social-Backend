@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PaymentServices = void 0;
+exports.PaymentServices = exports.getAllPayment = void 0;
 const path_1 = __importDefault(require("path"));
 const user_model_1 = require("../user/user.model");
 const fs_1 = require("fs");
@@ -22,6 +22,7 @@ const http_status_1 = __importDefault(require("http-status"));
 const payment_model_1 = require("./payment.model");
 const formattedDate_1 = require("../../utils/formattedDate");
 const confirmPaymentServices = (trxId, userId, month) => __awaiter(void 0, void 0, void 0, function* () {
+    const updatedMonth = parseInt(month.split(" ")[0]);
     const filePath = path_1.default.join(__dirname, "../../../../public/confirmation.html");
     let template = (0, fs_1.readFileSync)(filePath, "utf-8");
     const session = yield mongoose_1.default.startSession();
@@ -34,28 +35,29 @@ const confirmPaymentServices = (trxId, userId, month) => __awaiter(void 0, void 
         let price;
         let currentTimes;
         let endTimes;
-        if (month === "1") {
+        if (updatedMonth === 1) {
             price = 200;
             const { currentTime, endTime } = (0, formattedDate_1.formattedDate)(30);
             currentTimes = currentTime;
             endTimes = endTime;
         }
-        if (month === "3") {
+        if (updatedMonth === 3) {
             price = 500;
             const { currentTime, endTime } = (0, formattedDate_1.formattedDate)(90);
             currentTimes = currentTime;
             endTimes = endTime;
         }
-        if (month === "6") {
+        if (updatedMonth === 6) {
             price = 1000;
             const { currentTime, endTime } = (0, formattedDate_1.formattedDate)(180);
             currentTimes = currentTime;
             endTimes = endTime;
         }
         const paymentOptions = {
+            userMongodbId: user._id,
             userId: userId,
             price: price,
-            month: Number(month),
+            month: Number(updatedMonth),
             status: "PAID",
             startedSubScriptionAt: currentTimes,
             endSubScriptionAt: endTimes,
@@ -75,6 +77,12 @@ const confirmPaymentServices = (trxId, userId, month) => __awaiter(void 0, void 
         throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Something went wrong mama");
     }
 });
+const getAllPayment = () => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield payment_model_1.Payment.find().populate("userMongodbId");
+    return result;
+});
+exports.getAllPayment = getAllPayment;
 exports.PaymentServices = {
     confirmPaymentServices,
+    getAllPayment: exports.getAllPayment,
 };

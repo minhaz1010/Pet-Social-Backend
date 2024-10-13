@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PaymentController = void 0;
+exports.PaymentController = exports.getAllPayment = void 0;
 const fs_1 = require("fs");
 const path_1 = __importDefault(require("path"));
 const bookingUtils_1 = require("../../utils/bookingUtils");
@@ -41,6 +41,7 @@ const initializePayment = (0, catchAsyncError_1.default)((req, res) => __awaiter
     var _a, _b;
     const name = (_a = req.auth.sessionClaims) === null || _a === void 0 ? void 0 : _a.name;
     const email = (_b = req.auth.sessionClaims) === null || _b === void 0 ? void 0 : _b.email;
+    // address ,phone and totalPrice ,month,
     const address = req.body.address;
     const phone = req.body.phone;
     const totalPrice = req.body.totalPrice;
@@ -56,6 +57,7 @@ const initializePayment = (0, catchAsyncError_1.default)((req, res) => __awaiter
         transactionId: time,
     };
     const response = yield (0, bookingUtils_1.initiatePayment)(data);
+    // console.log(response,'response')
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
@@ -63,7 +65,17 @@ const initializePayment = (0, catchAsyncError_1.default)((req, res) => __awaiter
         result: response === null || response === void 0 ? void 0 : response.payment_url,
     });
 }));
+exports.getAllPayment = (0, catchAsyncError_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield payment_services_1.PaymentServices.getAllPayment();
+    (0, sendResponse_1.default)(res, {
+        statusCode: 200,
+        success: true,
+        message: "Get All payment info",
+        result,
+    });
+}));
 exports.PaymentController = {
     initializePayment,
     confirmPayment,
+    getAllPayment: exports.getAllPayment,
 };

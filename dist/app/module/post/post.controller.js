@@ -19,8 +19,7 @@ const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const post_services_1 = require("./post.services");
 // NOTE: create post controller
 const createPost = (0, catchAsyncError_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const result = yield post_services_1.PostServices.createPostInDatabase(req.body, (_a = req.file) === null || _a === void 0 ? void 0 : _a.path);
+    const result = yield post_services_1.PostServices.createPostInDatabase(req.body);
     (0, sendResponse_1.default)(res, {
         success: true,
         result,
@@ -80,27 +79,26 @@ const updateAPostInPremium = (0, catchAsyncError_1.default)((req, res) => __awai
     });
 }));
 const likeAPost = (0, catchAsyncError_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // const userId = req.auth.userId;
-    const userId = "user_2mn8oOL0b8rXSChtbd0sDfibfHs";
+    const userId = req.auth.userId;
     const postId = req.params.postId;
     const result = yield post_services_1.PostServices.likeAPost(postId, userId);
     (0, sendResponse_1.default)(res, {
         success: true,
         message: "Successfully Liked The Post",
         result,
-        statusCode: http_status_1.default.OK
+        statusCode: http_status_1.default.OK,
     });
 }));
 const disLikeAPost = (0, catchAsyncError_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // const userId = req.auth.userId;
-    const userId = "user_2mn8oOL0b8rXSChtbd0sDfibfHs";
+    const userId = req.auth.userId;
+    // const userId="user_2mn8oOL0b8rXSChtbd0sDfibfHs";
     const postId = req.params.postId;
     const result = yield post_services_1.PostServices.disLikeAPost(postId, userId);
     (0, sendResponse_1.default)(res, {
         success: true,
         message: "Successfully Dislike The Post",
         result,
-        statusCode: http_status_1.default.OK
+        statusCode: http_status_1.default.OK,
     });
 }));
 exports.PostController = {
@@ -111,5 +109,5 @@ exports.PostController = {
     updateASinglePost,
     deleteASinglePost,
     likeAPost,
-    disLikeAPost
+    disLikeAPost,
 };

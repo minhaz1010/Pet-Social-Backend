@@ -59,9 +59,35 @@ const updateASingleCommentOfAPost = (0, catchAsyncError_1.default)((req, res) =>
         message: "Updated A Comment",
     });
 }));
+const likeAComment = (0, catchAsyncError_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.auth.userId;
+    // const userId = "user_2n8JsKyG5g4roI6D3zHissu8imU";
+    const commentId = req.params.commentId;
+    const result = yield comment_services_1.CommentServices.likeAComment(commentId, userId);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        message: "Successfully Liked The Comment",
+        result,
+        statusCode: http_status_1.default.OK,
+    });
+}));
+const dislikeAComment = (0, catchAsyncError_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.auth.userId;
+    // const userId = "user_2n8JsKyG5g4roI6D3zHissu8imU";
+    const commentId = req.params.commentId;
+    const result = yield comment_services_1.CommentServices.disLikeAComment(commentId, userId);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        message: "Successfully Disliked The Comment",
+        result,
+        statusCode: http_status_1.default.OK,
+    });
+}));
 exports.CommentControllers = {
     postAComment,
     getAllCommentsOfAPost,
     updateASingleCommentOfAPost,
     deleteASingleCommentsOfAPost,
+    likeAComment,
+    dislikeAComment,
 };

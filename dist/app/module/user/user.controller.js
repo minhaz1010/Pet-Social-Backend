@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserController = void 0;
+exports.UserController = exports.deleteAUser = void 0;
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 const catchAsyncError_1 = __importDefault(require("../../utils/catchAsyncError"));
@@ -48,6 +48,7 @@ const createUpdateDeleteController = (0, catchAsyncError_1.default)(function (re
             yield user_services_1.UserServices.createUserInDatabaseFromClerk(attr);
         }
         if (eventType === "user.updated") {
+            console.log(attr.public_metadata, "public metadata");
             yield user_services_1.UserServices.updateUserInDatabaseFromClerk(attr);
         }
         if (eventType === "user.deleted") {
@@ -56,6 +57,10 @@ const createUpdateDeleteController = (0, catchAsyncError_1.default)(function (re
     });
 });
 const getAllUserFromDatabase = (0, catchAsyncError_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { sessionClaims } = req.auth;
+    if ((sessionClaims === null || sessionClaims === void 0 ? void 0 : sessionClaims.metadata.role) !== "ADMIN") {
+        throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Sorry you have no access to this route");
+    }
     const result = yield user_services_1.UserServices.getAllUserFromDatabase();
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
@@ -65,8 +70,7 @@ const getAllUserFromDatabase = (0, catchAsyncError_1.default)((req, res) => __aw
     });
 }));
 const getAUserDetails = (0, catchAsyncError_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // const userId = req.auth.userId;
-    const userId = "user_2mn8oOL0b8rXSChtbd0sDfibfHs";
+    const userId = req.auth.userId;
     const result = yield user_services_1.UserServices.getAUserDetails(userId);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
@@ -75,8 +79,21 @@ const getAUserDetails = (0, catchAsyncError_1.default)((req, res) => __awaiter(v
         result,
     });
 }));
+const getAUserDetailsByUserName = (0, catchAsyncError_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userName = req.params.userName;
+    const result = yield user_services_1.UserServices.getAUserDetailsByUserName(userName);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        message: "Successfully Get the user details",
+        success: true,
+        result,
+    });
+}));
 const followUser = (0, catchAsyncError_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield user_services_1.UserServices.followUser(req.params.followerId, req.body.userId);
+    const userId = req.auth.userId;
+    // console.log(userId,'userId');
+    console.log(req.params.followerId);
+    const result = yield user_services_1.UserServices.followUser(req.params.followerId, userId);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_1.default.OK,
@@ -85,12 +102,40 @@ const followUser = (0, catchAsyncError_1.default)((req, res) => __awaiter(void 0
     });
 }));
 const unfollowUser = (0, catchAsyncError_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield user_services_1.UserServices.unfollowUser(req.params.followerId, req.body.userId);
+    const userId = req.auth.userId;
+    // const userId = "user_2n8JsKyG5g4roI6D3zHissu8imU"
+    const result = yield user_services_1.UserServices.unfollowUser(req.params.followerId, userId);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_1.default.OK,
         message: "Unfollowed Successfully",
         result,
+    });
+}));
+const changeRole = (0, catchAsyncError_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { sessionClaims } = req.auth;
+    if ((sessionClaims === null || sessionClaims === void 0 ? void 0 : sessionClaims.metadata.role) !== "ADMIN") {
+        throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Sorry you have no access to this route");
+    }
+    const result = yield user_services_1.UserServices.changeRole(req.params.id, req.body.role);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_1.default.OK,
+        message: "Change role Successfully",
+        result,
+    });
+}));
+exports.deleteAUser = (0, catchAsyncError_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { sessionClaims } = req.auth;
+    if ((sessionClaims === null || sessionClaims === void 0 ? void 0 : sessionClaims.metadata.role) !== "ADMIN") {
+        throw new appError_1.default(http_status_1.default.BAD_REQUEST, "You have no access to this route");
+    }
+    const result = yield user_services_1.UserServices.deleteAUserInDatabase(req.params.id);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        message: "Successfully deleted",
+        result,
+        success: true,
     });
 }));
 exports.UserController = {
@@ -99,4 +144,7 @@ exports.UserController = {
     followUser,
     unfollowUser,
     getAUserDetails,
+    getAUserDetailsByUserName,
+    changeRole,
+    deleteAUser: exports.deleteAUser,
 };

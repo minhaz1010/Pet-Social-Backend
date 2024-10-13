@@ -13,6 +13,12 @@ const createPostValidation = zod_1.default.object({
         postType: zod_1.default.enum(["TIP", "STORY"]),
         author: zod_1.default.string(),
         isPremium: zod_1.default.boolean().optional(),
+        image: zod_1.default
+            .array(zod_1.default.object({
+            public_id: zod_1.default.string().min(1, "Public ID is required"),
+            secure_url: zod_1.default.string().url("Invalid URL format"),
+        }))
+            .optional(),
     }),
 });
 const updatePostValidation = zod_1.default.object({
@@ -20,7 +26,7 @@ const updatePostValidation = zod_1.default.object({
         title: zod_1.default.string().optional(),
         content: zod_1.default.string().optional(),
         petType: zod_1.default.string().optional(),
-        imageURL: zod_1.default.string().url().optional(),
+        image: zod_1.default.string().url().optional(),
         postType: zod_1.default.enum(["TIP", "STORY"]).optional(),
         isPremium: zod_1.default.boolean().optional(),
         likes: zod_1.default.number().optional(),

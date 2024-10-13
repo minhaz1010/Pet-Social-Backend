@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserServices = void 0;
+exports.UserServices = exports.deleteAUserInDatabase = exports.changeRole = void 0;
 const clerk_sdk_node_1 = require("@clerk/clerk-sdk-node");
 const user_model_1 = require("./user.model");
 const appError_1 = __importDefault(require("../../errors/appError"));
@@ -22,8 +22,8 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const createUserInDatabaseFromClerk = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     if (payload) {
         const userId = payload.id;
-        const userName = payload.username;
-        const fullName = `${payload.first_name} ${payload.last_name}`;
+        const userName = payload.username || "haha";
+        const fullName = `${payload.first_name || "srk"} ${payload.last_name || "salman"}`;
         const email = payload.email_addresses[0].email_address;
         const imageURL = payload.image_url;
         yield clerk_sdk_node_1.clerkClient.users.updateUser(userId, {
@@ -88,8 +88,6 @@ const getAUserDetails = (userId) => __awaiter(void 0, void 0, void 0, function* 
 // NOTE: follow a user/author by followerId(whom to follow)
 const followUser = (followerId, followedUserId) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    // followerId ==> minhaz1111
-    // followedUserId ==> minhaz1010
     // ^ jake follow korbo take khujlam
     const followerUser = yield user_model_1.User.findById(followerId);
     // ^ naa paile bolbo paai naai
@@ -97,15 +95,16 @@ const followUser = (followerId, followedUserId) => __awaiter(void 0, void 0, voi
         throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Follower user not found");
     }
     //  ^ je user follow korbe taake khujlam
-    const followedUser = yield user_model_1.User.findById(followedUserId);
+    const followedUser = yield user_model_1.User.findOne({ userId: followedUserId });
     // ^ naa paile bolbo paai naai
     if (!followedUser) {
         throw new appError_1.default(http_status_1.default.BAD_REQUEST, "User to be followed not found");
     }
+    const followedUser_id = followedUser._id;
     //  ^ je user follow korbe sei user er id ke object id te rupantor korlam
-    const followedUserObjectId = new mongoose_1.default.Types.ObjectId(followedUserId);
+    const followedUserObjectId = new mongoose_1.default.Types.ObjectId(followedUser_id);
     //  ^ check kortesi je user ki aage theke follower ke follow kore kina
-    const isAlreadyFollowing = (_a = followerUser.followings) === null || _a === void 0 ? void 0 : _a.includes(followedUserObjectId);
+    const isAlreadyFollowing = (_a = followerUser.followers) === null || _a === void 0 ? void 0 : _a.includes(followedUserObjectId);
     //  ^ jodi user aage theke follow kore tahole ei message dibo
     if (isAlreadyFollowing) {
         throw new appError_1.default(http_status_1.default.BAD_REQUEST, "You are already following this user");
@@ -119,7 +118,7 @@ const followUser = (followerId, followedUserId) => __awaiter(void 0, void 0, voi
             throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Failed to update follower's following list");
         }
         //  ^ je user follow korbe taar followers e followerId dhukaiya dilam
-        const updatedFollowedUser = yield user_model_1.User.findByIdAndUpdate(followedUserId, { $push: { followings: followerId } }, { new: true, session });
+        const updatedFollowedUser = yield user_model_1.User.findByIdAndUpdate(followedUserObjectId, { $push: { followings: followerId } }, { new: true, session });
         if (!updatedFollowedUser) {
             throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Failed to update user's followers list");
         }
@@ -148,11 +147,12 @@ const unfollowUser = (followerId, followedUserId) => __awaiter(void 0, void 0, v
         throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Follower user not found");
     }
     // ^ check kortesi je user unfollow korbe se ache kina
-    const followedUser = yield user_model_1.User.findById(followedUserId);
+    const followedUser = yield user_model_1.User.findOne({ userId: followedUserId });
     if (!followedUser) {
         throw new appError_1.default(http_status_1.default.BAD_REQUEST, "User to be followed not found");
     }
-    const followedUserObjectId = new mongoose_1.default.Types.ObjectId(followedUserId);
+    const followerUser_id = followedUser._id;
+    const followedUserObjectId = new mongoose_1.default.Types.ObjectId(followerUser_id);
     //  check kortesi je user follow korbe sei follower er followings e userId ache kina
     const isAlreadyFollowing = (_a = followerUser.followers) === null || _a === void 0 ? void 0 : _a.includes(followedUserObjectId);
     //  jodi userId naa thake taar mane se already taake unfollow kore
@@ -168,7 +168,7 @@ const unfollowUser = (followerId, followedUserId) => __awaiter(void 0, void 0, v
             throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Failed to update follower's following list");
         }
         // je unfollow korbe taar followings theke follwerId remove korlam hehe
-        const updatedFollowedUser = yield user_model_1.User.findByIdAndUpdate(followedUserId, { $pull: { followings: followerId } }, { new: true, session });
+        const updatedFollowedUser = yield user_model_1.User.findByIdAndUpdate(followedUserObjectId, { $pull: { followings: followerId } }, { new: true, session });
         if (!updatedFollowedUser) {
             throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Failed to update user's followers list");
         }
@@ -186,6 +186,43 @@ const unfollowUser = (followerId, followedUserId) => __awaiter(void 0, void 0, v
         session.endSession();
     }
 });
+const getAUserDetailsByUserName = (userName) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield user_model_1.User.findOne({ userName })
+        .populate({
+        path: "followers",
+        select: "userName email imageURL userId",
+    })
+        .populate({
+        path: "followings",
+        select: "userName email imageURL userId",
+    })
+        .populate({
+        path: "posts",
+        populate: {
+            path: "author",
+            select: "userName email imageURL",
+        },
+    });
+    return result;
+});
+// userId is mongodb _id
+const changeRole = (id, role) => __awaiter(void 0, void 0, void 0, function* () {
+    const userData = yield user_model_1.User.findById(id);
+    yield clerk_sdk_node_1.clerkClient.users.updateUser(userData === null || userData === void 0 ? void 0 : userData.userId, {
+        publicMetadata: { role },
+    });
+    const updatedUser = yield user_model_1.User.findByIdAndUpdate(id, { role }, { new: true });
+    return updatedUser;
+});
+exports.changeRole = changeRole;
+//  id is mongodb _id
+const deleteAUserInDatabase = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const userData = yield user_model_1.User.findById(id);
+    yield clerk_sdk_node_1.clerkClient.users.deleteUser(userData === null || userData === void 0 ? void 0 : userData.userId);
+    yield user_model_1.User.findByIdAndDelete(id);
+    return null;
+});
+exports.deleteAUserInDatabase = deleteAUserInDatabase;
 exports.UserServices = {
     createUserInDatabaseFromClerk,
     updateUserInDatabaseFromClerk,
@@ -194,4 +231,7 @@ exports.UserServices = {
     getAUserDetails,
     followUser,
     unfollowUser,
+    getAUserDetailsByUserName,
+    changeRole: exports.changeRole,
+    deleteAUserInDatabase: exports.deleteAUserInDatabase,
 };

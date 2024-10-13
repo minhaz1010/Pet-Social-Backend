@@ -10,4 +10,5 @@ const clerk_sdk_node_1 = require("@clerk/clerk-sdk-node");
 const router = express_1.default.Router();
 router.post("/", (0, clerk_sdk_node_1.ClerkExpressRequireAuth)(), payment_controller_1.PaymentController.initializePayment);
 router.post("/confirmation", payment_controller_1.PaymentController.confirmPayment);
+router.get("/all-payment", payment_controller_1.PaymentController.getAllPayment);
 exports.PaymentRouter = router;
