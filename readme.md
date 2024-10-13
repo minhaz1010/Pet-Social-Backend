@@ -1,6 +1,6 @@
 # Pet Care Tips & Stories - Backend
 
-This is the backend for the Pet Care Tips & Stories project, built with Node.js, Express, TypeScript, and MongoDB.
+This is the backend for the Pet Care Tips & Stories project, built with Node.js, Express, TypeScript, and MongoDB. 
 
 ## Technologies Used
 
