@@ -10,4 +10,7 @@ router.post(
   PaymentController.initializePayment,
 );
 router.post("/confirmation", PaymentController.confirmPayment);
+
+router.get("/all-payment", PaymentController.getAllPayment);
+
 export const PaymentRouter = router;

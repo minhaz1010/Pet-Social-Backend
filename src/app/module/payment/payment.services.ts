@@ -13,6 +13,7 @@ const confirmPaymentServices = async (
   userId: string,
   month: string,
 ) => {
+  const updatedMonth = parseInt(month.split(" ")[0]);
   const filePath = path.join(__dirname, "../../../../public/confirmation.html");
   let template = readFileSync(filePath, "utf-8");
   const session = await mongoose.startSession();
@@ -32,19 +33,19 @@ const confirmPaymentServices = async (
     let price;
     let currentTimes;
     let endTimes;
-    if (month === "1") {
+    if (updatedMonth === 1) {
       price = 200;
       const { currentTime, endTime } = formattedDate(30);
       currentTimes = currentTime;
       endTimes = endTime;
     }
-    if (month === "3") {
+    if (updatedMonth === 3) {
       price = 500;
       const { currentTime, endTime } = formattedDate(90);
       currentTimes = currentTime;
       endTimes = endTime;
     }
-    if (month === "6") {
+    if (updatedMonth === 6) {
       price = 1000;
       const { currentTime, endTime } = formattedDate(180);
       currentTimes = currentTime;
@@ -52,9 +53,10 @@ const confirmPaymentServices = async (
     }
 
     const paymentOptions: IPayment = {
+      userMongodbId: user._id,
       userId: userId,
       price: price as 200 | 500 | 1000,
-      month: Number(month) as 1 | 3 | 6,
+      month: Number(updatedMonth) as 1 | 3 | 6,
       status: "PAID",
       startedSubScriptionAt: currentTimes,
       endSubScriptionAt: endTimes,
@@ -75,6 +77,12 @@ const confirmPaymentServices = async (
   }
 };
 
+export const getAllPayment = async () => {
+  const result = await Payment.find().populate("userMongodbId");
+  return result;
+};
+
 export const PaymentServices = {
   confirmPaymentServices,
+  getAllPayment,
 };

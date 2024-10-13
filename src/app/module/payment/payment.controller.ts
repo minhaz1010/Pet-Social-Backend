@@ -11,7 +11,6 @@ import { PaymentServices } from "./payment.services";
 
 const confirmPayment = catchAsyncErrors(async (req, res) => {
   const { transactionId, userId, month } = req.query;
-
   const response = await verifyPayment(transactionId as string);
   const filePath = path.join(__dirname, "../../../../public/fail.html");
   const template = readFileSync(filePath, "utf-8");
@@ -34,6 +33,7 @@ const confirmPayment = catchAsyncErrors(async (req, res) => {
 const initializePayment = catchAsyncErrors(async (req, res) => {
   const name = req.auth.sessionClaims?.name as string;
   const email = req.auth.sessionClaims?.email as string;
+  // address ,phone and totalPrice ,month,
   const address = req.body.address;
   const phone = req.body.phone;
   const totalPrice = req.body.totalPrice;
@@ -49,6 +49,7 @@ const initializePayment = catchAsyncErrors(async (req, res) => {
     transactionId: time,
   };
   const response = await initiatePayment(data);
+  // console.log(response,'response')
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -57,7 +58,18 @@ const initializePayment = catchAsyncErrors(async (req, res) => {
   });
 });
 
+export const getAllPayment = catchAsyncErrors(async (req, res) => {
+  const result = await PaymentServices.getAllPayment();
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Get All payment info",
+    result,
+  });
+});
+
 export const PaymentController = {
   initializePayment,
   confirmPayment,
+  getAllPayment,
 };
