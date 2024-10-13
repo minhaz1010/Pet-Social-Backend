@@ -2,6 +2,11 @@ import { model, Schema } from "mongoose";
 import { IPayment } from "./payment.interface";
 
 const PaymentSchema = new Schema<IPayment>({
+  userMongodbId: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "User",
+  },
   userId: {
     type: String,
     required: true,
