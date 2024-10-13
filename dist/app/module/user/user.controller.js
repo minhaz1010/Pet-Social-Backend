@@ -48,7 +48,6 @@ const createUpdateDeleteController = (0, catchAsyncError_1.default)(function (re
             yield user_services_1.UserServices.createUserInDatabaseFromClerk(attr);
         }
         if (eventType === "user.updated") {
-            console.log(attr.public_metadata, "public metadata");
             yield user_services_1.UserServices.updateUserInDatabaseFromClerk(attr);
         }
         if (eventType === "user.deleted") {

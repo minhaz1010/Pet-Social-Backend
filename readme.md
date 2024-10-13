@@ -28,8 +28,8 @@ This is the backend for the Pet Care Tips & Stories project, built with Node.js,
 
 1. Clone the repository:
    ```
-   git clone https://github.com/your-username/pet-care-tips-stories.git
-   cd pet-care-tips-stories/backend
+   https://github.com/minhaz1010/Pet-Social-Backend.git
+   cd Pet-Social-Backend
    ```
 
 2. Install dependencies:
