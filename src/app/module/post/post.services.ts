@@ -131,6 +131,7 @@ const deleteSinglePostFromDatabase = async (postId: string) => {
     if (!updateUser) {
       throw new AppError(httpStatus.BAD_REQUEST, "Could not update the user");
     }
+
     await session.commitTransaction();
     return null;
   } catch (error) {
@@ -167,19 +168,19 @@ const likeAPost = async (postId: string, userId: string) => {
     throw new AppError(httpStatus.BAD_REQUEST, "No Post Found");
   }
   if (postData.dislikedBy.includes(userObjectId)) {
+    postData.dislikes -= 1;
     postData.dislikedBy = postData.dislikedBy.filter(
       (id) => id === userObjectId,
     );
-    postData.dislikes -= 1;
   }
   if (postData.likedBy.includes(userObjectId)) {
-    postData.likedBy = postData.likedBy.filter((id) => id === userObjectId);
     if (postData.likes > 0) {
       postData.likes -= 1;
     }
+    postData.likedBy = postData.likedBy.filter((id) => id === userObjectId);
   } else {
-    postData.likedBy.push(userObjectId);
     postData.likes += 1;
+    postData.likedBy.push(userObjectId);
   }
   const result = await postData.save();
   return result;
@@ -193,19 +194,19 @@ const disLikeAPost = async (postId: string, userId: string) => {
     throw new AppError(httpStatus.BAD_REQUEST, "No Post Found");
   }
   if (postData.likedBy.includes(userObjectId)) {
-    postData.likedBy = postData.likedBy.filter((id) => id === userObjectId);
     postData.likes -= 1;
+    postData.likedBy = postData.likedBy.filter((id) => id === userObjectId);
   }
   if (postData?.dislikedBy.includes(userObjectId)) {
-    postData.dislikedBy = postData.dislikedBy.filter(
-      (id) => id === userObjectId,
-    );
     if (postData.dislikedBy) {
       postData.dislikes -= 1;
     }
+    postData.dislikedBy = postData.dislikedBy.filter(
+      (id) => id === userObjectId,
+    );
   } else {
-    postData.dislikedBy.push(userObjectId);
     postData.dislikes += 1;
+    postData.dislikedBy.push(userObjectId);
   }
 
   const result = await postData.save();
