@@ -27,7 +27,10 @@ const getAllCommentsOfAPost = async (postId: string) => {
   if (!postExist) {
     throw new AppError(httpStatus.BAD_REQUEST, "No Post Found ");
   }
-  const result = await Comment.find({ post: postId }).sort("-createdAt");
+  const result = await Comment.find({ post: postId }).sort("-createdAt").populate({
+    path:"author",
+    select:"userName imageURL"
+  });
   if (result.length === 0) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
